@@ -1,8 +1,8 @@
-# Only deploy build inputs. Git deployments also rely on the staged file list.
+# Only deploy build inputs. Include source directory entries and their contents.
 /*
-!/api/
-!/server/
-!/src/
+!/api
+!/server
+!/src
 !/index.html
 !/package.json
 !/package-lock.json
