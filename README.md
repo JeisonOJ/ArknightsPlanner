@@ -70,4 +70,6 @@ The catalog snapshot comes from [ArknightsAssets/ArknightsGamedata](https://gith
 
 ## License
 
-The source is publicly viewable. This repository currently has no license file granting reuse or redistribution rights. The build includes [license notices for bundled dependencies](https://arknights-planner-nine.vercel.app/third-party-licenses.md).
+ArknightsPlanner’s original source code is licensed under the [MIT License](LICENSE).
+
+Arknights game names, trademarks, artwork, the upstream data represented in the catalog snapshot, and other third-party materials remain subject to their respective owners’ rights and terms and are outside the scope of this license. ArknightsPlanner is an unofficial fan project and has no affiliation with or endorsement from the rights holders. The build includes [license notices for bundled dependencies](https://arknights-planner-nine.vercel.app/third-party-licenses.md).
