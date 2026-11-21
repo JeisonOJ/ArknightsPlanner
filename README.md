@@ -1,97 +1,73 @@
-# Arknights Planner
+# ArknightsPlanner
 
-A private React and TypeScript resource planner for Global inventory and EN/CN goals. Each browser profile has its own IndexedDB. Only authentication reaches the server. Two operator identities use designated Japanese fan-kit stickers. Resource lists use original symbols. See [art sources and conditions](src/art/SOURCES.md).
+ArknightsPlanner is a personal hobby project for Arknights players who want to plan upgrades, track supplies, and budget pulls and outfits in one place. I built it for my own use and share it freely with the community.
 
-## Run locally on Windows
+## Try It Online
 
-Use Node.js 24 and PowerShell in the project directory.
+[Open ArknightsPlanner](https://arknights-planner-nine.vercel.app). It is free to use and requires no account or password.
 
-```powershell
-Set-Location C:\Dev\Codex\ArknightsPlanner
-npm.cmd ci
-Read-Host -MaskInput 'Shared password from your password manager' | npm.cmd run auth:setup
-npm.cmd run dev
+Your inventory, plans, wishlist, and imported artwork stay in IndexedDB in your browser. Each browser profile and site address has its own workspace. There is no cloud synchronization. Export a JSON backup regularly, especially before clearing site data or moving to another device.
+
+## Features
+
+- **Dashboard and inventory** — enter owned materials and battle records, then see total upgrade requirements and what you are short of.
+- **Operators** — plan levels, promotions, shared skill ranks, and masteries. The Active goals filter shows operators with progression targets.
+- **Modules** — plan stages independently of operator progression, set priorities, and review unlock levels, trust, and missions.
+- **Pull Planner** — order banner goals, add estimated income, and see exact Orundum shortages. Use eligible tickets and optionally the Originite Prime (OP) left after skin reservations.
+- **Skins** — search the outfit catalog, add catalog or manual wishlist entries, and reserve OP for priced outfits. Imported artwork enables previews where matching images are available.
+- **EN and CN catalogs** — see entries from both clients. EN indicates presence in the EN client data, and the separate Global confirmed label covers a curated subset of official announcements. CN-only entries have no projected Global release date. Special progression costs for Raidian and modules with incomplete stage costs are unavailable.
+- **Backup and restore** — export or import planner JSON under **Settings & backups**. Restore replaces the destination workspace after validation and confirmation. Keep a backup of any existing data at that destination.
+
+## Artwork and Game Assets
+
+The current source and hosted application ship without copyrighted Arknights artwork. The planner uses original symbols and initials until you import your own compatible images.
+
+Go to **Settings & backups → Artwork Library** and choose **Import folder** or **Import ZIP**. Use images you have permission to use, and retain the original filenames, including characters such as `#`. The importer supports PNG, JPEG, and WebP up to 16 MiB per image and matches catalog filenames within recognized folders. A ZIP can include an enclosing directory. Keep the relevant folders and filenames intact.
+
+| Images | Example paths and recognized folders |
+| --- | --- |
+| Operator and outfit thumbnails | `avatar/`, `portrait/`, `avatars/`, `portraits/`, `characters/` |
+| Operator and outfit illustrations | `skin/`, `characters/` |
+| Resource icons | `item/`, `items/`, `material/` |
+| Module icons | `equip/icon/` (the immediate parent is `icon/`) |
+
+The import summary shows matches, unsupported files, and failures. Imports retain existing matches unless you enable **Replace matching artwork already in the library**. Artwork stays in a separate browser-local library and is excluded from planner JSON backups. Keep your original folder or ZIP if you want to reimport the images on another device.
+
+## Local Development
+
+Use Node.js 24 and npm. From the repository root:
+
+```sh
+npm ci
+npm run dev
+npm test
+npm run build
 ```
 
-In PowerShell 7, use a strong randomly generated password of at least 20 characters. The masked prompt passes it to setup, which writes the salted scrypt verifier and an independent signing secret to the ignored `.env.local`. For an existing setup, start at `npm.cmd run dev`. Open the loopback address printed by Vite and enter the shared password. Use the same address, port and browser profile to access that inventory. Stop Vite with Ctrl+C.
+Open the loopback URL printed by Vite. The build runs the TypeScript check and writes the static site to `dist/`. The project requires no environment variables. The existing Vercel project builds automatically from pushes to `main` using [the checked-in configuration](vercel.json).
 
-## Verify and refresh
+The build uses the checked-in catalog snapshot. `npm run catalog` is a separate maintainer command that regenerates the snapshot from the upstream revision pinned in [the extractor](scripts/catalog.mjs).
 
-```powershell
-npm.cmd test
-npm.cmd run build
-```
+## AI-Assisted Development
 
-Build type-checks the frontend and packages assets in `dist/assets`. It moves the entry HTML to `server/app.html` for authenticated delivery. Use the development command for local use. Serving the dist folder alone cannot provide login.
+AI assisted with implementation and testing. I set the project’s direction, make the project decisions, and review changes.
 
-The normal build uses the included catalog. `npm.cmd run catalog` explicitly regenerates it from the pin in [the extractor](scripts/catalog.mjs). To update, review a new commit, change the pin, regenerate, inspect the diff and run the tests. The script fetches only selected JSON, checks regional constants and writes the snapshot after successful processing.
+## ☕ Support the Project
 
-- [Primary source](https://github.com/ArknightsAssets/ArknightsGamedata/tree/e0cd8f274ffbcf57ed0b0684cb681620478ffe0e). Both regional directories use `gamedata/excel/`. Character, patch, skill, module, favor, item and constant tables supply the factual fields.
-- EN indicates client presence. CN-only entries have no assumed EN date. The separate confirmed Global label is curated from an [official EN notice](https://www.arknights.global/news/1695) and covers only the named subset.
-- Raidian uses special progression. Three modules lack stage-cost arrays and are omitted. Unknown IDs in saved records survive a catalog change and remain in backups.
+ArknightsPlanner is a personal hobby project, developed with the assistance of artificial intelligence and shared freely with the community.
 
-## Using the planner
+If you find it useful and would like to support its development, you can buy me a coffee. Any contribution is greatly appreciated and entirely voluntary!
 
-1. Enter Global resource quantities in Inventory. Every planner section reads these balances.
-2. Select an operator and enter current and target progression. Calculations begin at the start of the entered level. Mastery targets include their shared skill and promotion prerequisites once. Module plans budget module stages independently and show the unlock level, trust, and mission requirements. Alternate class forms share their base progression.
-3. Use Modules to search, set a priority, or mark a stage complete. Operator and module views edit the same record. Resource tables show the comparison for the selected scope. Dashboard totals combine all operator requirements before subtracting inventory.
-4. Search Skins by outfit, operator, codename or ID and filter by regional catalog presence. Add a match directly to the wishlist or enter a manual outfit. Set its OP price when known. Owned outfits release reservations. Unknown prices reserve zero until priced.
-5. Add banner goals in preferred funding order. Each banner can add a manual income estimate in whole pull equivalents, available starting at its queue position. Dates are informational. Standard tickets, Orundum and optionally the remaining OP fund goals once in that order. Restricted pool tickets and recruitment permits contribute zero.
-6. Export a JSON file from Settings & backups. Import validates the format, version, records and known operator limits before asking to replace the workspace atomically. A different browser or phone can restore the file manually.
+☕ [Support me on Ko-fi](https://ko-fi.com/jeisonoj)
 
-## Import local artwork
+Your support motivates me to keep learning, improving my projects, and sharing new ideas with the community.
 
-1. From [ArknightsGameResource](https://github.com/yuanyan3060/ArknightsGameResource), save the folders `avatar/`, `portrait/`, `item/`, and `skin/` for the categories you want. For modules, use [Aceship’s equip/icon directory](https://github.com/Aceship/Arknight-Images/tree/main/equip/icon). Aceship's `avatars/`, `portraits/`, `items/`, and `characters/` are also supported. Keep the original filenames, including `#`.
-2. Put the folders under one local directory. Open **Settings & backups → Artwork Library → Import folder** and choose that directory. Alternatively, ZIP the folders with their paths intact and choose **Import ZIP**. A repository ZIP with an enclosing directory also works, but a ZIP containing only the selected folders is smaller. PNG, JPEG, and WebP images up to 16 MiB per file are supported.
-3. Review the summary for matches, skipped formats, and unmatched files. The importer matches exact catalog identifiers and uses the folder to distinguish a portrait from a full illustration. It prefers avatars, then base portraits, then verified alternate variants. Catalog entries and image packs can be from different revisions, so coverage can vary.
-4. To update existing matches, enable **Replace matching artwork already in the library** before importing. Otherwise the import adds missing entries and keeps existing images. To empty the library, choose **Remove imported artwork** and confirm.
+## Disclaimer and Acknowledgments
 
-Artwork is stored as Blobs in a separate IndexedDB database in the current browser profile and origin. The planner reads visible images through temporary object URLs. The library has no server endpoint or synchronization. JSON backups contain planner records, so keep the original ZIP or folders to restore artwork on another browser. The resource mirrors contain copyrighted artwork. Use files you are permitted to use.
+ArknightsPlanner is an unofficial fan project. It is unaffiliated with and has no endorsement from Hypergryph, Yostar, or the creators of Arknights. Game names, artwork, and other game assets remain the property of their respective rights holders.
 
-For full illustrations on Operators, reimport your existing `skin/` folder or ZIP. The importer uses the catalog's built-in evolution mapping and keeps each available phase under a separate key. Leave replacement off to fill missing images while retaining your current library. Outfit Preview opens a modal with fit, zoom and drag controls.
+The catalog snapshot comes from [ArknightsAssets/ArknightsGamedata](https://github.com/ArknightsAssets/ArknightsGamedata), with a curated Global release label informed by an [official EN notice](https://www.arknights.global/news/1695). The optional artwork importer recognizes naming and folder conventions used by [ArknightsGameResource](https://github.com/yuanyan3060/ArknightsGameResource) and [Aceship’s Arknight-Images](https://github.com/Aceship/Arknight-Images). Those repositories are references for compatibility and do not grant permission to redistribute game artwork.
 
-## Structure
+## License
 
-| Path | Purpose |
-|---|---|
-| `src/catalog.json`, `src/catalog.ts` | Versioned, immutable game data and field types |
-| `src/model.ts`, `src/calc.ts` | User records, backup checks, budgets and upgrade calculations |
-| `src/db.ts` | Version 1 IndexedDB database and atomic read/modify/write transactions |
-| `src/main.tsx`, `src/Operations.tsx`, `src/Budget.tsx`, `src/ui.tsx` | Navigation and planner screens |
-| `api/`, `server/auth.mjs` | Production HTML gate, login, logout and session verification |
-| `tests/` | Calculation, authentication and persistence checks |
-
-## Publish from GitHub to Vercel
-
-1. Create an empty private GitHub repository under the personal account linked to your Vercel Hobby team. The local preparation commit uses a project-only email. Before pushing, set this repository's author to your GitHub username and the exact GitHub-provided no-reply address from **GitHub → Settings → Emails**, so Vercel can associate the commit with its owner.
-
-   ```powershell
-   git config --local user.name '<github-username>'
-   git config --local user.email '<github-provided-noreply-address>'
-   git commit --amend --reset-author --no-edit
-   git remote add origin '<repository-url>'
-   git push -u origin main
-   ```
-
-   Amending the local commit changes its hash and preserves the verified file content. [Vercel Git author requirements](https://vercel.com/docs/deployments/troubleshoot-project-collaboration)
-2. Generate independent production settings from PowerShell 7. Use a different strong password from your local one.
-
-   ```powershell
-   Read-Host -MaskInput 'Production shared password' | npm.cmd run auth:setup -- --production
-   ```
-
-3. In Vercel, import the GitHub repository. Select the root of the repository and Node 24. The repository config sets the Vite preset, `npm ci`, `npm run build`, and `dist`. Add the two values from the ignored `.env.vercel.local` to the **Production** environment in the Vercel project. Keep both server-side.
-
-| Variable | Value |
-|---|---|
-| `PASSWORD_VERIFIER` | 32 hexadecimal salt characters, a colon, and the 128-character hexadecimal scrypt result generated by setup |
-| `SESSION_SECRET` | Independent random signing key generated by setup |
-
-4. Before sharing the production URL, open **Firewall → Configure → Custom Rules**. Add a fixed-window **Rate Limit** rule for **POST /api/login**. Count by IP, allow 8 requests in 10 minutes, and return HTTP 429. Apply the rule and verify it on the production origin. The application also limits attempts within each running function instance. [Vercel rate limiting](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting)
-5. On the final HTTPS URL, verify that a signed-out visitor sees sign-in, a valid password opens the app, logout restores sign-in, and reloading preserves a sample inventory entry. Confirm a signed-out request to `/api/app` shows sign-in and `/index.html` has no public application entry. Use a private browser window or test profile for the check.
-
-The production cookie is signed, host-only, HttpOnly, Secure and SameSite=Strict, with a 12-hour lifetime. Logout clears it from the browser. If a session is compromised, rotating the signing secret invalidates issued cookies. The application HTML is private and uncached. JavaScript, CSS and catalog data are public build assets. Git and Vercel exclusions cover `ArknightsArtwork/`, local backup exports, and environment files.
-
-### Transfer planner data to the production URL
-
-Each person should export JSON from **Settings & backups** on their current browser origin, sign in at the final HTTPS URL, and import their JSON there. Import replaces the planner data at the destination, so export a copy there first if it has entries. Check inventory and a saved goal before relying on the new origin. Then reimport the original local artwork folders or ZIP from **Artwork Library** on that origin. JSON backups contain planner data. Artwork stays in the separate browser-local library.
+The source is publicly viewable. This repository currently has no license file granting reuse or redistribution rights. The build includes [license notices for bundled dependencies](https://arknights-planner-nine.vercel.app/third-party-licenses.md).

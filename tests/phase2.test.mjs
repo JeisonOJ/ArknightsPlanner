@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import "fake-indexeddb/auto";
 import { access } from "../src/db.ts";
 import { budget, empty, progress, parseBackup } from "../src/model.ts";
@@ -42,7 +41,7 @@ test("each queue entry consumes funds once and income cannot repay earlier defic
     [0, 1, 0],
   );
 });
-test("stable visual metadata maps to the original IDs", async () => {
+test("stable visual metadata maps to the original IDs", () => {
   const angel = catalog.operators.find((o) => o.id === "char_103_angel");
   assert.equal(angel.portraitId, "char_103_angel_1");
   assert.equal(
@@ -57,10 +56,6 @@ test("stable visual metadata maps to the original IDs", async () => {
   );
   for (const id of ["char_002_amiya", "char_1023_ghost2"]) {
     assert(catalog.operators.some((o) => o.id === id));
-    const png = await readFile(
-      new URL("../src/art/portraits/" + id + ".png", import.meta.url),
-    );
-    assert.equal(png.subarray(1, 4).toString(), "PNG");
   }
 });
 test("outfits merge once per full skin ID and resolve both EN and CN-only owners", () => {

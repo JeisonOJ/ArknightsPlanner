@@ -1,7 +1,5 @@
 # Only deploy build inputs. Include source directory entries and their contents.
 /*
-!/api
-!/server
 !/src
 !/index.html
 !/package.json
@@ -10,7 +8,6 @@
 !/vercel.json
 !/vite.config.mjs
 /ArknightsArtwork/
-/server/app.html
 .env*
 *.env
 *.env.*

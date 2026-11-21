@@ -26,7 +26,7 @@ const descriptions = [
   "Prioritize unlocks and module stages.",
   "Allocate your saved pulls across upcoming banners.",
   "Reserve Originite Prime for your preferred outfits.",
-  "Manage local data, backups, and your session.",
+  "Manage local data, backups, and artwork.",
 ];
 function Terrain() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -287,19 +287,6 @@ function Settings() {
           EN and CN indicate catalog presence. Confirmed Global releases have a
           separate label. Three modules with incomplete costs are omitted.
         </p>
-        <p className="muted">
-          Operator stickers © Hypergryph / Yostar.{" "}
-          <a href="https://www.arknights.jp/fankit">Japanese fan kit</a> ·{" "}
-          <a href="https://www.arknights.jp/fankit/precautions">
-            Usage conditions
-          </a>
-          . Other identities use original symbols or initials.
-        </p>
-      </Panel>
-      <Panel title="Session">
-        <form method="post" action="/api/logout">
-          <button>Sign out</button>
-        </form>
       </Panel>
     </>
   );

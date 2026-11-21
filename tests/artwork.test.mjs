@@ -1,6 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import { ZipWriter, BlobWriter, BlobReader } from "@zip.js/zip.js";
 import "fake-indexeddb/auto";
 import { classifyArtwork, compareArtwork } from "../src/artworkMatch.ts";
@@ -10,7 +9,7 @@ import { access } from "../src/db.ts";
 import { parseBackup } from "../src/model.ts";
 const key = (path) => classifyArtwork(path).match?.key;
 
-test("built-in art maps by phase and alternate form without absorbing outfits", () => {
+test("imported operator art maps by phase and alternate form without absorbing outfits", () => {
   for (const [suffix, phase] of [
     ["1", 0],
     ["1+", 1],
@@ -73,8 +72,10 @@ test("repository paths resolve by ID and asset purpose", () => {
 });
 
 test("ZIP and folder imports persist, keep duplicates, and clear independently of planner backups", async () => {
-  const png = await readFile(
-    new URL("../src/art/portraits/char_002_amiya.png", import.meta.url),
+  // Synthetic 1 × 1 PNG. Match by game ID without using game artwork.
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jmvQAAAAASUVORK5CYII=",
+    "base64",
   );
   const blob = new Blob([png], { type: "image/png" });
   // Browser image decoding is covered by the real-browser smoke check.

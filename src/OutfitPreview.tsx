@@ -16,13 +16,11 @@ export function OutfitPreview({
   name,
   operator,
   localKey,
-  src,
   onClose,
 }: {
   name: string;
   operator: string;
   localKey: string;
-  src?: string;
   onClose: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -173,7 +171,6 @@ export function OutfitPreview({
             }}
           >
             <Art
-              src={src}
               localKey={localKey}
               alt={name}
               onImageLoad={(image) => {

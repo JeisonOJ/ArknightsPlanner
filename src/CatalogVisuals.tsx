@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 import { useEffect, useRef, useState } from "react";
 import { catalog, type Operator } from "./catalog";
 import { readArtwork } from "./artworkDb";
@@ -8,32 +7,12 @@ export const operatorsById = new Map(
   catalog.operators.map((op) => [op.id, op]),
 );
 const itemsById = new Map(catalog.items.map((item) => [item.id, item]));
-// Only locally reviewed files can supply art. Missing entries generate no network request.
-const files = import.meta.glob<string>("./art/*/*.{png,jpg,jpeg,webp}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-});
-const art = new Map(
-  Object.entries(files).map(([path, url]) => [
-    path.replace("./art/", "").replace(/\.[^.]+$/, ""),
-    url,
-  ]),
-);
-export function imageFor(
-  kind: "portraits" | "items" | "outfits" | "illustrations",
-  id: string | null,
-) {
-  return id ? art.get(kind + "/" + id) : undefined;
-}
 export function Art({
-  src,
   localKey,
   alt = "",
   onImageLoad,
   fallback,
 }: {
-  src?: string;
   localKey?: string;
   alt?: string;
   onImageLoad?: (image: HTMLImageElement) => void;
@@ -80,17 +59,16 @@ export function Art({
     local && local.key === localKey && local.keys === keys
       ? local.url
       : undefined;
-  const image = localUrl && localUrl !== failed ? localUrl : src;
   return (
     <span ref={container} className="art-content">
-      {image && image !== failed ? (
+      {localUrl && localUrl !== failed ? (
         <img
           className="catalog-img"
           alt={alt}
           onLoad={(event) => onImageLoad?.(event.currentTarget)}
           loading="lazy"
-          src={image}
-          onError={() => setFailed(image)}
+          src={localUrl}
+          onError={() => setFailed(localUrl)}
         />
       ) : (
         <>{fallback}</>
@@ -176,7 +154,6 @@ export function ResourceMark({ id }: { id: string }) {
     >
       <Art
         localKey={"item:" + id}
-        src={imageFor("items", item?.iconId ?? null)}
         fallback={<Glyph type={type} />}
       />
     </span>
@@ -190,7 +167,6 @@ export function OperatorIdentity({ op }: { op: Operator }) {
       <span className="catalog-mark portrait" aria-hidden="true">
         <Art
           localKey={"operator:" + op.id}
-          src={imageFor("portraits", op.id)}
           fallback={<b>{name.slice(0, 2).toUpperCase()}</b>}
         />
       </span>

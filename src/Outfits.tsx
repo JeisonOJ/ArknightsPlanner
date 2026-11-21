@@ -6,7 +6,6 @@ import {
   opSearch,
   Glyph,
   Art,
-  imageFor,
 } from "./CatalogVisuals";
 import { Panel, usePlanner } from "./ui";
 import type { Skin } from "./model";
@@ -24,19 +23,16 @@ function OutfitRow({
 }) {
   const [expanded, toggle] = useState(false);
   const op = operatorsById.get(outfit.operatorId);
-  const illustration = imageFor("illustrations", outfit.illustrationId);
   const keys = useArtworkKeys();
   const thumbnailKey = "outfit:" + outfit.id;
   const illustrationKey = "illustration:" + outfit.id;
   const fullSize = keys.has(illustrationKey);
-  const canPreview =
-    fullSize || keys.has(thumbnailKey) || Boolean(illustration);
+  const canPreview = fullSize || keys.has(thumbnailKey);
   return (
     <article className="outfit-row">
       <span className="catalog-mark outfit-mark">
         <Art
           localKey={thumbnailKey}
-          src={imageFor("outfits", outfit.portraitId)}
           fallback={<Glyph type="coat" />}
         />
       </span>
@@ -71,7 +67,6 @@ function OutfitRow({
           name={outfit.name}
           operator={op ? opName(op) : outfit.operatorId}
           localKey={fullSize ? illustrationKey : thumbnailKey}
-          src={illustration}
           onClose={() => toggle(false)}
         />
       )}
